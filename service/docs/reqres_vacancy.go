@@ -1,5 +1,7 @@
 package docs
 
+import "gitlab.com/dvkgroup/vacancies-parser/service/model"
+
 //go:generate swagger generate spec -o ../public/swagger.json --scan-models
 
 // swagger:route POST /vacancies/search vacancy vacancySearchRequest

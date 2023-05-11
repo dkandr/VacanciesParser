@@ -20,7 +20,7 @@ func Run(c *handler.VacancyController) {
 	r.Use(middleware.Logger)
 
 	r.Get("/public/*", func(w http.ResponseWriter, r *http.Request) {
-		http.StripPrefix("/public/", http.FileServer(http.Dir("./module4/selenium/public"))).ServeHTTP(w, r)
+		http.StripPrefix("/public/", http.FileServer(http.Dir("./service/public"))).ServeHTTP(w, r)
 	})
 
 	r.Mount("/swagger", swaggerRouter())

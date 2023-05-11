@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"gitlab.com/dvkgroup/vacancies-parser/service/model"
 	"strconv"
 )
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gitlab.com/dvkgroup/vacancies-parser/service/model"
 	"log"
 	"net/http"
 	"strconv"

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"gitlab.com/dvkgroup/vacancies-parser/service/handler"
 	"net/http"
 
 	"github.com/go-chi/chi"
