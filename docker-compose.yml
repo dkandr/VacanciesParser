@@ -1,16 +1,19 @@
 version: "3"
 services:
   nginx:
-    image: nginx:latest
+    image: nginx
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
       - networkproxy
+    depends_on:
+      - service1
+      - service2
 
   selenium:
-    image: selenium/standalone-firefox:latest
+    image: selenium/standalone-firefox
     ports:
       - "127.0.0.1:4444:4444"
     environment:
@@ -20,31 +23,35 @@ services:
 
   service1:
     build: ./app
+    restart: on-failure
     ports:
-      - "127.0.0.1:8081:8080"
+      - "8081"
     networks:
       - networkproxy
+      - network1
+    depends_on:
+      - selenium
 
   service2:
     build: ./app
     ports:
-      - "127.0.0.1:8082:8080"
+      - "8082"
     networks:
       - networkproxy
+      - network2
+    depends_on:
+      - selenium
 
   bd:
-    image: postgres:latest
+    image: postgres
     restart: always
     environment:
       - POSTGRES_PASSWORD=password
-    ports:
-      - "127.0.0.1:5432:5432"
     networks:
-      - networkproxy
+      - network1
+      - network2
 
 networks:
   networkproxy:
-#    external: true
   network1:
   network2:
-

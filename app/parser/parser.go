@@ -30,7 +30,8 @@ func (v VacancyParser) Parse(query string) ([]model.Vacancy, error) {
 	}
 
 	// прописываем адрес нашего драйвера
-	urlPrefix := selenium.DefaultURLPrefix
+	//urlPrefix := selenium.DefaultURLPrefix
+	urlPrefix := "http://selenium:4444/wd/hub"
 
 	// немного костылей чтобы драйвер не падал
 	const maxTries = 5

@@ -1,4 +1,4 @@
-module gitlab.com/dvkgroup/vacancies-parser
+module gitlab.com/dvkgroup/vacancies-parser/app
 
 go 1.19
 
