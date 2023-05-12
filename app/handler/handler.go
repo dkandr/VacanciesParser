@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/dvkgroup/vacancies-parser/service/model"
+	"gitlab.com/dvkgroup/vacancies-parser/app/model"
 	"net/http"
 	"strconv"
 )

@@ -5,7 +5,7 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
       - networkproxy
 
@@ -19,19 +19,32 @@ services:
       - networkproxy
 
   service1:
-    build: ../service
+    build: ./app
     ports:
-        - "127.0.0.1:8081:8080"
+      - "127.0.0.1:8081:8080"
     networks:
       - networkproxy
 
   service2:
-    build: ../app
+    build: ./app
     ports:
       - "127.0.0.1:8082:8080"
     networks:
       - networkproxy
 
+  bd:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - networkproxy
+
 networks:
   networkproxy:
+#    external: true
+  network1:
+  network2:
 

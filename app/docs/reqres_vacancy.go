@@ -1,6 +1,6 @@
 package docs
 
-import "gitlab.com/dvkgroup/vacancies-parser/service/model"
+import "gitlab.com/dvkgroup/vacancies-parser/app/model"
 
 //go:generate swagger generate spec -o ../public/swagger.json --scan-models
 

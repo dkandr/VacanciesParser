@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"gitlab.com/dvkgroup/vacancies-parser/service/templates"
+	"gitlab.com/dvkgroup/vacancies-parser/app/templates"
 	"html/template"
 	"net/http"
 	"time"

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"gitlab.com/dvkgroup/vacancies-parser/service/model"
+	"gitlab.com/dvkgroup/vacancies-parser/app/model"
 	"log"
 )
 

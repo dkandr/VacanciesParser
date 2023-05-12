@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"gitlab.com/dvkgroup/vacancies-parser/service/handler"
+	"gitlab.com/dvkgroup/vacancies-parser/app/handler"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +20,7 @@ func Run(c *handler.VacancyController) {
 	r.Use(middleware.Logger)
 
 	r.Get("/public/*", func(w http.ResponseWriter, r *http.Request) {
-		http.StripPrefix("/public/", http.FileServer(http.Dir("./service/public"))).ServeHTTP(w, r)
+		http.StripPrefix("/public/", http.FileServer(http.Dir("./app/public"))).ServeHTTP(w, r)
 	})
 
 	r.Mount("/swagger", swaggerRouter())
