@@ -2,7 +2,7 @@ version: "3"
 services:
   nginx:
     image: nginx
-    restart: on-failure
+    restart: always
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
@@ -15,16 +15,19 @@ services:
 
   selenium:
     image: selenium/standalone-firefox
+    restart: always
     ports:
       - "127.0.0.1:4444:4444"
     environment:
+      - SE_NODE_MAX_SESSIONS=3
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
       - VNC_NO_PASSWORD=1
     networks:
       - networkproxy
 
   service1:
     build: ./app
-    restart: on-failure
+    restart: always
     ports:
       - "127.0.0.1:8081:8080"
     networks:
@@ -35,6 +38,7 @@ services:
 
   service2:
     build: ./app
+    restart: always
     ports:
       - "127.0.0.1:8082:8080"
     networks:
