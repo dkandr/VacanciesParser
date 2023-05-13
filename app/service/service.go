@@ -25,13 +25,13 @@ func NewVacancyService(r VacancyRepository, p VacancyParser) *VacancyService {
 	return &VacancyService{r: r, p: p}
 }
 
-func (s *VacancyService) Search(query string) {
+func (s *VacancyService) Search(query string) int {
 	//go func() {
 	log.Println("parser start (query :", query, ")")
 	vacancies, err := s.p.Parse(query)
 	if err != nil {
 		log.Println(err)
-		return
+		return 0
 	}
 
 	for i := range vacancies {
@@ -42,6 +42,8 @@ func (s *VacancyService) Search(query string) {
 	}
 	log.Println("parser.. ok!")
 	//}()
+
+	return len(vacancies)
 }
 
 func (s *VacancyService) Create(vacancy model.Vacancy) (model.Vacancy, error) {

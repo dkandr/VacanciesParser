@@ -14,7 +14,7 @@ import "gitlab.com/dvkgroup/vacancies-parser/app/model"
 // required: true
 //
 // responses:
-//  200: description: Ok.
+//  200: description: Shows the number of vacancies found.
 //  400: description: Bad request
 //	500: description: Internal server error
 

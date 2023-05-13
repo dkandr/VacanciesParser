@@ -9,7 +9,7 @@ import (
 )
 
 type VacancyService interface {
-	Search(string)
+	Search(string) int
 	GetByID(int64) (model.Vacancy, error)
 	GetList() []model.Vacancy
 	Delete(int64) error
@@ -30,9 +30,9 @@ func NewVacancyController(s VacancyService) *VacancyController {
 func (c VacancyController) Search(w http.ResponseWriter, r *http.Request) {
 	query := r.FormValue("query")
 
-	c.s.Search(query)
+	count := c.s.Search(query)
 
-	_, _ = fmt.Fprintf(w, "Ok.\n")
+	_, _ = fmt.Fprintf(w, "Find %d vacancies.\n", count)
 }
 
 func (c VacancyController) GetByID(w http.ResponseWriter, r *http.Request) {

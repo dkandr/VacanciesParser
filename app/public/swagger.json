@@ -95,7 +95,7 @@
         ],
         "responses": {
           "200": {
-            "description": " Ok."
+            "description": " Display count parse vacancies."
           },
           "400": {
             "description": " Bad request"
@@ -124,7 +124,7 @@
           "x-go-name": "Value"
         }
       },
-      "x-go-package": "gitlab.com/dvkgroup/vacancies-parser/service/model"
+      "x-go-package": "gitlab.com/dvkgroup/vacancies-parser/app/model"
     },
     "Vacancy": {
       "type": "object",
@@ -153,7 +153,7 @@
           "x-go-name": "ValidThrough"
         }
       },
-      "x-go-package": "gitlab.com/dvkgroup/vacancies-parser/service/model"
+      "x-go-package": "gitlab.com/dvkgroup/vacancies-parser/app/model"
     }
   },
   "responses": {
