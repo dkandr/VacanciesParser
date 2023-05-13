@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"gitlab.com/dvkgroup/vacancies-parser/app/model"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
-
-	"github.com/PuerkitoBio/goquery"
 
 	"github.com/tebeka/selenium"
 )
@@ -31,7 +30,6 @@ func (v VacancyParser) Parse(query string) ([]model.Vacancy, error) {
 	}
 
 	// прописываем адрес нашего драйвера
-	//urlPrefix := selenium.DefaultURLPrefix
 	urlPrefix := "http://selenium:4444/wd/hub"
 
 	// немного костылей чтобы драйвер не падал
@@ -64,14 +62,29 @@ func (v VacancyParser) Parse(query string) ([]model.Vacancy, error) {
 
 	res := make([]model.Vacancy, 0, len(links))
 
-	for _, l := range links {
-		v, err := v.getVacancy(l)
-		if err != nil {
-			continue
-		}
+	var m sync.Mutex
+	var wg sync.WaitGroup
 
-		res = append(res, v)
+	limit := make(chan struct{}, 10)
+
+	for _, l := range links {
+		wg.Add(1)
+		go func(link string) {
+			defer wg.Done()
+
+			v, err := v.getVacancy(link, limit)
+			if err != nil {
+				log.Println("Parse:", err)
+				return
+			}
+
+			m.Lock()
+			res = append(res, v)
+			m.Unlock()
+		}(l)
 	}
+
+	wg.Wait()
 
 	return res, nil
 }
@@ -109,45 +122,45 @@ func (v VacancyParser) getVacancies(count int, query string) ([]string, error) {
 	)
 
 	links := make([]string, 0, count)
-	var m sync.Mutex
-	var wg sync.WaitGroup
 
 	for i := 1; i <= count/VacanciesPerPage+1; i++ {
-		wg.Add(1)
+		_ = v.driver.Get(fmt.Sprintf("https://career.habr.com/vacancies?page=%d&q=%s&type=all", i, query))
 
-		go func(n int) {
-			_ = v.driver.Get(fmt.Sprintf("https://career.habr.com/vacancies?page=%d&q=%s&type=all", n, query))
+		elems, err := v.driver.FindElements(selenium.ByCSSSelector, ".vacancy-card__title-link")
+		if err != nil {
+			return nil, err
+		}
 
-			elems, err := v.driver.FindElements(selenium.ByCSSSelector, ".vacancy-card__title-link")
+		for n := range elems {
+			link, err := elems[n].GetAttribute("href")
 			if err != nil {
-				//return nil, err
-				return
+				continue
 			}
 
-			for n := range elems {
-				link, err := elems[n].GetAttribute("href")
-				if err != nil {
-					continue
-				}
-
-				m.Lock()
-				links = append(links, HabrCareerLink+link)
-				m.Unlock()
-			}
-
-			wg.Done()
-		}(i)
+			links = append(links, HabrCareerLink+link)
+		}
 	}
-
-	wg.Wait()
 
 	return links, nil
 }
 
-func (v VacancyParser) getVacancy(link string) (model.Vacancy, error) {
-	resp, err := http.Get(link)
+func (v VacancyParser) getVacancy(link string, limit chan struct{}) (model.Vacancy, error) {
+	var resp *http.Response
+	var err error
+
+	limit <- struct{}{}
+
+	defer func() {
+		<-limit
+	}()
+
+	resp, err = http.Get(link)
 	if err != nil {
 		return model.Vacancy{}, err
+	}
+
+	if resp.Status != "200 OK" {
+		return model.Vacancy{}, errors.New(link + ":" + resp.Status)
 	}
 
 	var doc *goquery.Document
