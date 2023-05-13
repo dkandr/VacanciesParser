@@ -15,10 +15,6 @@ type VacancyService interface {
 	Delete(int64) error
 }
 
-type Parser interface {
-	Parse()
-}
-
 type VacancyController struct {
 	s VacancyService
 }
