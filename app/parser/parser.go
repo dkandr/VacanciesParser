@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 
@@ -108,25 +109,37 @@ func (v VacancyParser) getVacancies(count int, query string) ([]string, error) {
 	)
 
 	links := make([]string, 0, count)
+	var m sync.Mutex
+	var wg sync.WaitGroup
 
 	for i := 1; i <= count/VacanciesPerPage+1; i++ {
+		wg.Add(1)
 
-		_ = v.driver.Get(fmt.Sprintf("https://career.habr.com/vacancies?page=%d&q=%s&type=all", i, query))
+		go func(n int) {
+			_ = v.driver.Get(fmt.Sprintf("https://career.habr.com/vacancies?page=%d&q=%s&type=all", n, query))
 
-		elems, err := v.driver.FindElements(selenium.ByCSSSelector, ".vacancy-card__title-link")
-		if err != nil {
-			return nil, err
-		}
-
-		for n := range elems {
-			link, err := elems[n].GetAttribute("href")
+			elems, err := v.driver.FindElements(selenium.ByCSSSelector, ".vacancy-card__title-link")
 			if err != nil {
-				continue
+				//return nil, err
+				return
 			}
 
-			links = append(links, HabrCareerLink+link)
-		}
+			for n := range elems {
+				link, err := elems[n].GetAttribute("href")
+				if err != nil {
+					continue
+				}
+
+				m.Lock()
+				links = append(links, HabrCareerLink+link)
+				m.Unlock()
+			}
+
+			wg.Done()
+		}(i)
 	}
+
+	wg.Wait()
 
 	return links, nil
 }
