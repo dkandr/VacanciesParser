@@ -145,16 +145,13 @@ func (v VacancyParser) getVacancies(count int, query string) ([]string, error) {
 }
 
 func (v VacancyParser) getVacancy(link string, limit chan struct{}) (model.Vacancy, error) {
-	var resp *http.Response
-	var err error
-
 	limit <- struct{}{}
 
 	defer func() {
 		<-limit
 	}()
 
-	resp, err = http.Get(link)
+	resp, err := http.Get(link)
 	if err != nil {
 		return model.Vacancy{}, err
 	}
